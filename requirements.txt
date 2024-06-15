@@ -1,42 +1,48 @@
-python=3.12
-numpy
-scipy
-pandas
-numba
-jupyter
-ipykernel
-ipywidgets
-cvxpy
-scikit-learn
-xgboost
-lightgbm
-nltk
-umap-learn
-kneed
-pytorch
-pytorch-cuda=12.1
-pytorch-lightning
-torchvision
-torchinfo
-scikit-image
-opencv
-autograd
-tensorboard
-matplotlib
-seaborn
-skorch
-bokeh
-plotly
-graphviz
-pydot
-distinctipy
-gdown
+
+- pytorch
+- nvidia
+- conda-forge
+
+- python=3.12
+- numpy
+- scipy
+- pandas
+- numba
+- jupyter
+- ipykernel
+- ipywidgets
+- cvxpy
+- scikit-learn
+- xgboost
+- lightgbm
+- nltk
+- umap-learn
+- kneed 
+- pytorch
+- pytorch-cuda=12.1
+- pytorch-lightning
+- torchvision
+- torchinfo
+- scikit-image
+- opencv
+- autograd
+- tensorboard
+- matplotlib
+- seaborn
+- skorch
+- bokeh
+- plotly
+- graphviz
+- pydot
+- distinctipy
+- gdown
+
 
 # Additional requirements from HRNet GitHub repository
-EasyDict==1.7
-opencv-python==3.4.1.15
-shapely==1.6.4
-Cython
-pyyaml
-json_tricks
-yacs>=0.1.5
+- EasyDict==1.7
+- opencv-python==3.4.1.15
+- shapely==1.6.4
+- Cython
+- pyyaml
+- json_tricks
+- yacs>=0.1.5

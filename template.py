@@ -14,7 +14,7 @@ list_of_files= [
     "src/conf/settings.py",
     
     "src/common/cli.py",
-    "src/commom/vis.py",
+    "src/common/vis.py",
     
     "src/data/augmentations.py",
     "src/data/inference.py",
@@ -27,7 +27,7 @@ list_of_files= [
     
     "research/trials_nagham.ipynb",
     "research/trials_amin.ipynb",
-    "research/trials_rasha.ipynb"
+    "research/trials_rasha.ipynb",
 
     
     "utils.py",
@@ -35,7 +35,6 @@ list_of_files= [
     "predict.py",
     "test.py"
     
-    "requirements.txt"
 ]
 
 

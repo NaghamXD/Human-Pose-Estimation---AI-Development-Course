@@ -15,11 +15,11 @@ https://github.com/NaghamXD/Human-Pose-Estimation---AI-Development-Course
 ### STEP 01- Create a conda environment after opening the repository
 
 ```bash
-micromamba create -n hpe python=3.8 -y
+micromamba create -n Hpe -c conda-forge python=3.12
 ```
 
 ```bash
-micromamba activate hpe
+micromamba activate Hpe
 ```
 
 ### STEP 02- Install the requirements
