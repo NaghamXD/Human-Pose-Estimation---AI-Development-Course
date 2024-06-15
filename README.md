@@ -8,24 +8,24 @@ This repository contains the implementation of human pose estimation using the H
 
 clone the repository
 
-'''bash
+```bash
 https://github.com/NaghamXD/Human-Pose-Estimation---AI-Development-Course
-'''
+```
 
 ### STEP 01- Create a conda environment after opening the repository
 
-'''bash
+```bash
 micromamba create -n hpe python=3.8 -y
-'''
+```
 
-'''bash
+```bash
 micromamba activate hpe
-'''
+```
 
 ### STEP 02- Install the requirements
 
-'''bash
+```bash
 pip install -r requirements.txt
-'''
+```
 
 
