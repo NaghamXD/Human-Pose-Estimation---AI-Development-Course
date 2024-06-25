@@ -6,6 +6,7 @@
 - python=3.12
 - numpy
 - scipy
+- scipy.io
 - pandas
 - numba
 - jupyter
@@ -46,3 +47,4 @@
 - pyyaml
 - json_tricks
 - yacs>=0.1.5
+

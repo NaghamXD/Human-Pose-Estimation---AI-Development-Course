@@ -9,6 +9,8 @@ logging.basicConfig(level=logging.INFO, format='[%(asctime)s]: %(message)s')
 PROJECT_NAME = 'HRNet_HPE'
 
 list_of_files= [
+    "src/__init__.py",
+    
     "src/conf/__init__.py",
     "src/conf/labels.json",
     "src/conf/settings.py",
@@ -21,6 +23,8 @@ list_of_files= [
     
     "src/net/base.py",
     "src/net/hrnet.py",
+    "src/net/yolov5.py",
+
     
     "src/results/gui.py",
     "src/results/eval.py",
