@@ -1,6 +1,8 @@
 
 # Project data directories
 hr-lspet/
+dataset/
+yolov5/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
