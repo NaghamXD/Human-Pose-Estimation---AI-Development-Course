@@ -6,9 +6,10 @@ from typing import Any
 
 # Data Paths
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-DATA_DIR = Path(os.environ.get("DATA_DIR", BASE_DIR.joinpath("hr-lspet")))
+DATA_DIR = Path(os.environ.get("DATA_DIR", BASE_DIR.joinpath("dataset")))
 RAW_DATA_DIR = DATA_DIR.joinpath('raw')
 LABELS_PATH = DATA_DIR.joinpath("joints.mat")
+IMAGE_DIR = DATA_DIR.joinpath("hr-lspet1")
 
 
 SOURCE_DIR = BASE_DIR.joinpath("src")
