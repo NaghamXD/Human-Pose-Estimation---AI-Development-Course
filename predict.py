@@ -34,49 +34,34 @@ def predict_yolov5(config_path: str, model_path: str, save_path: str) -> None:
     ])
 
     model = torch.hub.load('ultralytics/yolov5', 'custom', path=model_path)  # local model
-    # model = torch.hub.load('path/to/yolov5', 'custom', path=model_path, source='local', force_reload = True)  # local repo
     model.classes = [0]  # Set classes to detect (e.g., person)
 
-
+    img_list = os.listdir(test_img_dir)
+    num_imgs = len(img_list)
     # Prediction
     with torch.no_grad():
-        for img_name in os.listdir(test_img_dir):
-            img_path = os.path.join(test_img_dir, img_name)
+        for i in range(num_imgs):
+            img_path = os.path.join(test_img_dir, img_list[i])
             img = cv2.imread(img_path)
 
             if img is None:
                 print(f'Failed to read image: {img_path}')
                 continue
 
-            img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-            
-            # Apply transformations
-            img_pil = Image.fromarray(img_rgb)
-            img_tensor = transform(img_pil).unsqueeze(0)  # Add batch dimension
-            results = model(img_tensor)
-           # Process each detected object
-            for pred in results[0]:  # iterate through predictions
-                xyxy = pred[:4].cpu().numpy()  # extract bounding box coordinates
-                conf = float(pred[4])  # confidence score
-                cls_conf = float(pred[5])  # class confidence
-                cls = int(pred[5])  # class index (assuming it's the same as class confidence)
-
-                # Save labels to text file
-                if output_txt_path:
-                    x_center = (xyxy[2] + xyxy[0]) / 2
-                    y_center = (xyxy[3] + xyxy[1]) / 2
-                    width = xyxy[2] - xyxy[0]
-                    height = xyxy[3] - xyxy[1]
-                    xywh = [x_center, y_center, width, height]  # x_center, y_center, width, height
-                    with open(os.path.join(output_txt_path, f'{img_name[:-4]}.txt'), 'a') as f:
-                        f.write(f'{cls} {" ".join([str(x) for x in xywh])}\n')
-
-                # Draw bounding boxes on the image
-                if output_img_path:
-                     cv2.rectangle(img, (int(xyxy[0]), int(xyxy[1])), (int(xyxy[2]), int(xyxy[3])), (0, 255, 0), 2)
-
-
-            # Save annotated image
-            save_img_path = os.path.join(output_img_path, img_name)
-            cv2.imwrite(save_img_path, img)
-            print(f'Processed image: {img_name}')
+            results = model(img)
+            results.show()
+            logger.info(f"Image: {img_list[i]}")
+            xyxy = results.xyxy[0].cpu().numpy()[0]
+            print(results.pandas().xyxy[0])
+            # Convert the bounding box coordinates to integers
+            x1, y1, x2, y2 =  int(xyxy[0]), int(xyxy[1]), int(xyxy[2]), int(xyxy[3])
+            try:
+                # Draw the bounding box on the image (use appropriate color and thickness)
+                color = (0, 255, 0)  # Green color
+                thickness = 2  # Thickness of the bounding box
+                cv2.rectangle(img, (x1, y1), (x2, y2), color, thickness)
+                
+                save_img_path = os.path.join(output_img_path, img_list[i])
+                cv2.imwrite(save_img_path, img)
+            except cv2.error as e:
+                print("Error: ", e)
