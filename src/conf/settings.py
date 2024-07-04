@@ -6,6 +6,7 @@ from typing import Any
 
 # Data Paths
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
+print(f"BASE_DIR is set to: {BASE_DIR}")
 DATA_DIR = Path(os.environ.get("DATA_DIR", BASE_DIR.joinpath("hr-lspet")))
 RAW_DATA_DIR = DATA_DIR.joinpath('raw')
 LABELS_PATH = DATA_DIR.joinpath("joints.mat")

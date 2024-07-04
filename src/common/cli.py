@@ -3,7 +3,7 @@ import json
 import logging
 import os
 import re 
-
+import sys
 from pathlib import Path
 from typing import Any
 from typing import Optional
@@ -15,9 +15,6 @@ import pandas as pd
 from   scipy.io   import  loadmat
 from collections import UserDict
 from functools import cached_property
-
-
-from src.conf import settings
 
 from PIL import Image
 
@@ -59,8 +56,8 @@ class LabelConfig(UserDict):
 
 
 
-def load_labels_config() -> LabelConfig:
-    with open(settings.LABELS_CONFIG_PATH, "r", encoding="utf-8") as handle:
+def load_labels_config(path) -> LabelConfig:
+    with open(path, "r", encoding="utf-8") as handle:
         labels_config = LabelConfig(json.load(handle))
     
     return labels_config
