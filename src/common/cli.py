@@ -1,22 +1,23 @@
 
 import json
+import yaml
 import logging
 import os
 import sys
 import random
 import shutil
-import yaml
+from scipy.io import loadmat
+import numpy as np
+import pandas as pd
+from collections import UserDict
+from functools import cached_property
 from pathlib import Path
 from typing import Any
 from typing import Optional
 from typing import Union
 from typing import List, Set
 
-import numpy as np
-import pandas as pd
-from   scipy.io   import  loadmat
-from collections import UserDict
-from functools import cached_property
+
 
 from PIL import Image
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
@@ -154,4 +155,38 @@ def create_yolo_data(custom_yolo_annotation_path, output_path, raw_data_dir, tra
         }, yamlfile, default_flow_style=False)
         
     # make sure there is no such file as '.DS_Store'
+    
+    
 
+def create_hrnet_json_labels(img_dir: str, mat_path: str, output_json_path:str) -> None:
+    # Load joint data from joints.mat
+    try:
+        joints_data  = loadmat(mat_path)
+    except Exception as e:
+        print(f"Error loading .mat file: {e}")
+        raise
+
+    key = [k for k in joints_data.keys() if k[0] != '_'][0] #joints
+    joint_annotations = joints_data[key]
+    
+    
+    # Get Images filenames:
+    image_filenames = sorted([f for f in os.listdir(img_dir) if f.endswith('.png')])
+    num_images = len(image_filenames)
+
+    
+    for img_idx in range(num_images):
+        keypoints = []
+        for kp_idx in range(joint_annotations.shape[0]):
+            x, y, v = joint_annotations[kp_idx, :, img_idx]
+            keypoints.extend([int(x), int(y), int(v)])
+        
+        image_name = image_filenames[img_idx]
+        annotation = {image_name: {"bbox": [], "keypoints": keypoints}}
+        
+        # Save each annotation to a separate JSON file
+        json_filename = os.path.join(output_json_path, f"{image_name.split('.')[0]}.json")
+        with open(json_filename, 'w') as json_file:
+            json.dump(annotation, json_file, indent=4)
+
+    print(f"Annotations saved to {output_json_path} directory")
