@@ -1,7 +1,10 @@
 
 # Project data directories
 hr-lspet/
+<<<<<<< HEAD
 dataset/
+=======
+>>>>>>> 1fd19346cd7fa921cc0441ec2bd472f4f2fbbc7f
 yolov5/
 
 # Byte-compiled / optimized / DLL files
