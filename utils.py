@@ -2,7 +2,7 @@ import os
 import json
 import logging
 from typing import Any, Dict, List, Set, Tuple
-
+import numpy as np 
 import torch
 from torch.utils.data import Dataset
 from torchvision import transforms
@@ -112,3 +112,33 @@ class KeypointDataset(Dataset):
         targets = torch.tensor(targets, dtype=torch.float32)
 
         return (image, targets)
+
+
+def normalize_xywh(xywh_bbox: np.ndarray, image_width: int, image_height: int) -> list:
+    """
+    Convert XYXY bounding box format to XYWH format and normalize.
+
+    Parameters
+    ----------
+    xyxy_bbox : tuple or list
+        Bounding box coordinates in XYWH format (x_center, y_center, width, height).
+    image_width : int
+        Width of the image.
+    image_height : int
+        Height of the image.
+
+    Returns
+    -------
+    tuple
+        Normalized bounding box coordinates in XYWH format (center_x, center_y, width, height).
+    """
+    if np.array(xywh_bbox).ndim > 1 or len(xywh_bbox) > 4:
+        raise ValueError('xywh format: [x1, y1, width, height]')
+    x_center, y_center, width, height = xywh_bbox
+    # Normalize coordinates
+    x_center /= image_width
+    y_center /= image_height
+    width /= image_width
+    height /= image_height
+
+    return [x_center, y_center, width, height]

@@ -2,7 +2,7 @@
 import os
 from typing import Any, List, Tuple
 import numpy as np
-
+import pandas as pd 
 import torch
 from torch.utils.data import DataLoader
 from torchvision import transforms
@@ -11,46 +11,60 @@ from torchvision import transforms
 
 def calculate_iou(box1: np.ndarray, box2: np.ndarray) -> float:
     """
-    Calculate Intersection over Union (IoU) of two bounding boxes.
+    Calculate Intersection over Union (IoU) of two bounding boxes in XYWH format.
     """
-    x1 = max(box1[0], box2[0])
-    y1 = max(box1[1], box2[1])
-    x2 = min(box1[2], box2[2])
-    y2 = min(box1[3], box2[3])
+    # Convert XYWH to XYXY format for intersection calculation
+    x1 = max(box1[0] - box1[2] / 2, box2[0] - box2[2] / 2)
+    y1 = max(box1[1] - box1[3] / 2, box2[1] - box2[3] / 2)
+    x2 = min(box1[0] + box1[2] / 2, box2[0] + box2[2] / 2)
+    y2 = min(box1[1] + box1[3] / 2, box2[1] + box2[3] / 2)
+    
+    # Calculate intersection area
     intersection = max(0, x2 - x1) * max(0, y2 - y1)
-    area1 = (box1[2] - box1[0]) * (box1[3] - box1[1])
-    area2 = (box2[2] - box2[0]) * (box2[3] - box2[1])
+    
+    # Calculate area of each box
+    area1 = box1[2] * box1[3]
+    area2 = box2[2] * box2[3]
+    
+    # Calculate union area
     union = area1 + area2 - intersection
-    return intersection / union
+    
+    # Calculate IoU
+    iou = intersection / union if union != 0 else 0
+    return iou
 
-def evaluate_model(model: Any, data_loader: DataLoader, label_dir: str) -> Tuple[float, float, float]:
+def calculate_pckh(ground_truths: np.ndarray, predictions: np.ndarray, threshold=0.5):
+    correct_keypoints = 0
+    total_keypoints = 0
+
+    for pred, gt in zip(predictions, ground_truths):
+        head_size = np.linalg.norm(gt[1] - gt[2])
+        pckh_threshold = threshold * head_size
+
+        for p, g in zip(pred, gt):
+            if np.linalg.norm(p - g) <= pckh_threshold:
+                correct_keypoints += 1
+            total_keypoints += 1
+
+    pckh = correct_keypoints / total_keypoints
+    return pckh
+
+def evaluate_model(ground_truth_bbox: np.ndarray, predicted_bbox: np.ndarray, ground_truths: np.ndarray, predictions: np.ndarray) -> float:
     """
     Evaluate the model using ground truth labels.
     """
-    model.eval()
-    all_iou = []
-    with torch.no_grad():
-        for imgs, labels in data_loader:
-            if isinstance(imgs, dict):
-                for img_name, img_tensor in imgs.items():
-                    imgs = img_tensor # Adjust this line based on your dataset
-            imgs = imgs.to('cuda' if torch.cuda.is_available() else 'cpu')
-            labels = labels.to('cuda' if torch.cuda.is_available() else 'cpu')
-            
-            results = model(imgs)
-            for i, result in enumerate(results.xyxy):
-                if len(result) > 0:
-                    # Take the most obvious person (highest confidence score)
-                    best_result = result[0]
-                    pred_box = best_result[:4].cpu().numpy()
-                    
-                    # Load ground truth boxes
-                    class_id, cx, cy, w, h = labels
-                    if class_id == 0:  # Only consider person class
-                        gx, gy, gw, gh = cx * 416, cy * 416, w * 416, h * 416
-                        gt_box = [gx - gw / 2, gy - gh / 2, gx + gw / 2, gy + gh / 2]
-                        iou = calculate_iou(pred_box, gt_box)
-                        all_iou.append(iou)
+    ious = []
+    for gt_box, pred_box in zip(ground_truth_bbox, predicted_bbox):
+        iou = calculate_iou(gt_box, pred_box)
+        ious.append(iou)
     
-    mean_iou = np.mean(all_iou)
-    return mean_iou
+    mean_iou = np.mean(ious)
+    pckh = calculate_pckh(predictions, ground_truths)
+
+    results = {
+        "Metric": ["PCKh@0.5", "Mean IoU"],
+        "Score": [pckh, mean_iou]
+    }
+
+    df = pd.DataFrame(results)
+    return df

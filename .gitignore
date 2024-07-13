@@ -1,7 +1,10 @@
 
 # Project data directories
 hr-lspet/
-yolov5/
+data/
+
+# project files:
+src/conf/labels.json
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

@@ -12,7 +12,6 @@ list_of_files= [
     "src/__init__.py",
     
     "src/conf/__init__.py",
-    "src/conf/labels.json",
     "src/conf/settings.py",
     
     "src/common/cli.py",
@@ -22,10 +21,8 @@ list_of_files= [
     "src/data/inference.py",
     
     "src/net/base.py",
-    "src/net/hrnet.py",
-    "src/net/yolov5.py",
+    "src/net/yolov8.py",
 
-    
     "src/results/gui.py",
     "src/results/eval.py",
     
